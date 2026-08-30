@@ -668,7 +668,7 @@ renderGallery(mediaFiles);
 
 
 
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -954,4 +954,1641 @@ renderGallery();
 </script>
 
 </body>
+</html> -->
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Media Gallery Pro</title>
+
+<style>
+/* =========================================================
+   RESET
+========================================================= */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+    background:
+        radial-gradient(circle at top, #172554 0%, #020617 45%);
+    color: #e2e8f0;
+    min-height: 100vh;
+}
+
+body.no-scroll {
+    overflow: hidden;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+
+    padding: 14px 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+
+    background: rgba(2, 6, 23, 0.88);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+/* =========================================================
+   SEARCH
+========================================================= */
+.search-wrapper {
+    position: relative;
+    flex: 1;
+    min-width: 220px;
+}
+
+.search-wrapper span {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.6;
+}
+
+#search {
+    width: 100%;
+    padding: 11px 14px 11px 38px;
+
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+
+    background: rgba(15, 23, 42, 0.95);
+    color: white;
+
+    outline: none;
+    font-size: 14px;
+
+    transition: 0.2s;
+}
+
+#search:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+}
+
+/* =========================================================
+   CONTROLS
+========================================================= */
+.toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+select {
+    padding: 10px 12px;
+
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.08);
+
+    background: #0f172a;
+    color: white;
+
+    outline: none;
+    cursor: pointer;
+}
+
+/* =========================================================
+   FILTER BUTTONS
+========================================================= */
+.filters {
+    display: flex;
+    gap: 6px;
+}
+
+.filters button {
+    padding: 8px 13px;
+
+    border: none;
+    border-radius: 999px;
+
+    background: #1e293b;
+    color: #cbd5e1;
+
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.filters button:hover {
+    background: #334155;
+}
+
+.filters button.active {
+    background: #6366f1;
+    color: white;
+}
+
+/* =========================================================
+   TOP INFO
+========================================================= */
+.gallery-header {
+    padding: 16px 18px 4px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+#mediaCount {
+    font-weight: 600;
+}
+
+/* =========================================================
+   GALLERY
+========================================================= */
+.gallery {
+    padding: 15px 18px 25px;
+
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+@media (min-width: 600px) {
+    .gallery {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 900px) {
+    .gallery {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1300px) {
+    .gallery {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+}
+
+/* =========================================================
+   CARD
+========================================================= */
+.card {
+    position: relative;
+    overflow: hidden;
+
+    border-radius: 16px;
+
+    background: #0f172a;
+    border: 1px solid rgba(255,255,255,0.06);
+
+    cursor: pointer;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(99,102,241,0.35);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+}
+
+/* =========================================================
+   MEDIA PREVIEW
+========================================================= */
+.media-preview {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0f172a,
+            #1e293b
+        );
+}
+
+.media-preview img,
+.media-preview video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+    display: block;
+
+    transition: transform 0.35s ease;
+}
+
+.card:hover .media-preview img,
+.card:hover .media-preview video {
+    transform: scale(1.05);
+}
+
+/* =========================================================
+   MEDIA BADGE
+========================================================= */
+.type-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+
+    padding: 5px 8px;
+
+    border-radius: 999px;
+
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+
+    background: rgba(0,0,0,0.7);
+    color: white;
+
+    backdrop-filter: blur(8px);
+}
+
+/* =========================================================
+   PLAY BUTTON
+========================================================= */
+.play {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    pointer-events: none;
+}
+
+.play span {
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: rgba(0,0,0,0.65);
+    border: 1px solid rgba(255,255,255,0.18);
+
+    font-size: 20px;
+
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+}
+
+/* =========================================================
+   CARD INFO
+========================================================= */
+.info {
+    padding: 11px 12px 13px;
+}
+
+.info-title {
+    color: #f8fafc;
+    font-size: 13px;
+    font-weight: 600;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.info-date {
+    margin-top: 4px;
+
+    color: #64748b;
+    font-size: 11px;
+}
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+.empty {
+    display: none;
+
+    min-height: 45vh;
+
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    text-align: center;
+    color: #94a3b8;
+}
+
+.empty-icon {
+    font-size: 45px;
+    margin-bottom: 10px;
+}
+
+.empty h3 {
+    color: #e2e8f0;
+    margin-bottom: 6px;
+}
+
+/* =========================================================
+   LIGHTBOX
+========================================================= */
+.lightbox {
+    position: fixed;
+    inset: 0;
+
+    display: none;
+
+    z-index: 100;
+
+    background: rgba(0,0,0,0.94);
+    backdrop-filter: blur(12px);
+}
+
+.lightbox.open {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* =========================================================
+   LIGHTBOX TOPBAR
+========================================================= */
+.lightbox-topbar {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    min-height: 64px;
+    padding: 12px 18px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.75),
+        transparent
+    );
+
+    z-index: 20;
+}
+
+.viewer-title {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.viewer-counter {
+    color: #94a3b8;
+    font-size: 12px;
+    margin-top: 3px;
+}
+
+/* =========================================================
+   LIGHTBOX ACTIONS
+========================================================= */
+.viewer-actions {
+    display: flex;
+    gap: 7px;
+}
+
+.viewer-btn {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+
+    background: rgba(15,23,42,0.8);
+    color: white;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.viewer-btn:hover {
+    background: #1e293b;
+}
+
+/* =========================================================
+   VIEWER AREA
+========================================================= */
+.viewer-content {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 80px 90px;
+}
+
+.viewer-content img,
+.viewer-content video {
+    max-width: 90vw;
+    max-height: 82vh;
+
+    border-radius: 12px;
+
+    object-fit: contain;
+
+    box-shadow: 0 20px 80px rgba(0,0,0,0.6);
+
+    transition: transform 0.2s ease;
+}
+
+.viewer-content img {
+    user-select: none;
+}
+
+/* =========================================================
+   SIDE NAVIGATION
+========================================================= */
+.nav-btn {
+    position: absolute;
+
+    top: 50%;
+    transform: translateY(-50%);
+
+    width: 52px;
+    height: 90px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+
+    background: rgba(15,23,42,0.65);
+    color: white;
+
+    font-size: 28px;
+
+    cursor: pointer;
+
+    z-index: 20;
+
+    backdrop-filter: blur(10px);
+
+    transition: 0.2s;
+}
+
+.nav-btn:hover {
+    background: rgba(99,102,241,0.75);
+}
+
+.nav-prev {
+    left: 18px;
+}
+
+.nav-next {
+    right: 18px;
+}
+
+/* =========================================================
+   BOTTOM CONTROLS
+========================================================= */
+.viewer-bottom {
+    position: absolute;
+
+    left: 50%;
+    bottom: 15px;
+
+    transform: translateX(-50%);
+
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    padding: 8px;
+
+    border-radius: 12px;
+
+    background: rgba(15,23,42,0.82);
+    border: 1px solid rgba(255,255,255,0.08);
+
+    z-index: 20;
+}
+
+.zoom-value {
+    padding: 0 8px;
+    color: #cbd5e1;
+    font-size: 12px;
+}
+
+/* =========================================================
+   MOBILE VIEWER
+========================================================= */
+@media (max-width: 650px) {
+
+    .viewer-content {
+        padding: 80px 55px;
+    }
+
+    .viewer-content img,
+    .viewer-content video {
+        max-width: 94vw;
+        max-height: 75vh;
+    }
+
+    .nav-btn {
+        width: 38px;
+        height: 65px;
+        font-size: 22px;
+    }
+
+    .nav-prev {
+        left: 7px;
+    }
+
+    .nav-next {
+        right: 7px;
+    }
+
+    .viewer-title {
+        max-width: 180px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .viewer-actions .viewer-btn:nth-child(3),
+    .viewer-actions .viewer-btn:nth-child(4) {
+        display: none;
+    }
+
+    .viewer-bottom {
+        bottom: 8px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header>
+
+    <div class="search-wrapper">
+        <span>🔍</span>
+        <input
+            type="text"
+            id="search"
+            placeholder="Search media..."
+            autocomplete="off"
+        >
+    </div>
+
+    <div class="toolbar">
+
+        <div class="filters">
+
+            <button
+                class="active"
+                data-filter="all"
+                onclick="setFilter('all', this)"
+            >
+                All
+            </button>
+
+            <button
+                data-filter="image"
+                onclick="setFilter('image', this)"
+            >
+                Images
+            </button>
+
+            <button
+                data-filter="video"
+                onclick="setFilter('video', this)"
+            >
+                Videos
+            </button>
+
+        </div>
+
+        <select id="sort">
+            <option value="name-asc">Name ↑</option>
+            <option value="name-desc">Name ↓</option>
+            <option value="date-desc">Newest</option>
+            <option value="date-asc">Oldest</option>
+        </select>
+
+    </div>
+
+</header>
+
+<!-- =========================================================
+     GALLERY HEADER
+========================================================= -->
+
+<div class="gallery-header">
+
+    <div id="mediaCount">
+        0 media
+    </div>
+
+    <div>
+        Click an item to open viewer
+    </div>
+
+</div>
+
+<!-- =========================================================
+     GALLERY
+========================================================= -->
+
+<div class="gallery" id="gallery"></div>
+
+<!-- =========================================================
+     EMPTY STATE
+========================================================= -->
+
+<div class="empty" id="empty">
+
+    <div class="empty-icon">
+        🗂️
+    </div>
+
+    <h3>
+        No media found
+    </h3>
+
+    <p>
+        Try changing the search or filter.
+    </p>
+
+</div>
+
+<!-- =========================================================
+     LIGHTBOX
+========================================================= -->
+
+<div
+    class="lightbox"
+    id="lightbox"
+    role="dialog"
+    aria-modal="true"
+>
+
+    <!-- TOP BAR -->
+    <div class="lightbox-topbar">
+
+        <div>
+
+            <div
+                class="viewer-title"
+                id="viewerTitle"
+            >
+                Media
+            </div>
+
+            <div
+                class="viewer-counter"
+                id="viewerCounter"
+            >
+                1 / 1
+            </div>
+
+        </div>
+
+        <div class="viewer-actions">
+
+            <button
+                class="viewer-btn"
+                onclick="downloadCurrent()"
+                title="Download"
+            >
+                ⬇
+            </button>
+
+            <button
+                class="viewer-btn"
+                onclick="toggleFullscreen()"
+                title="Fullscreen"
+            >
+                ⛶
+            </button>
+
+            <button
+                class="viewer-btn"
+                onclick="closeLightbox()"
+                title="Close"
+            >
+                ✕
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- PREVIOUS -->
+    <button
+        class="nav-btn nav-prev"
+        onclick="showPrevious()"
+        aria-label="Previous media"
+        title="Previous"
+    >
+        ‹
+    </button>
+
+    <!-- VIEWER -->
+    <div
+        class="viewer-content"
+        id="viewerContent"
+    >
+    </div>
+
+    <!-- NEXT -->
+    <button
+        class="nav-btn nav-next"
+        onclick="showNext()"
+        aria-label="Next media"
+        title="Next"
+    >
+        ›
+    </button>
+
+    <!-- IMAGE CONTROLS -->
+    <div class="viewer-bottom">
+
+        <button
+            class="viewer-btn"
+            onclick="zoomOut()"
+            title="Zoom out"
+        >
+            −
+        </button>
+
+        <span
+            class="zoom-value"
+            id="zoomValue"
+        >
+            100%
+        </span>
+
+        <button
+            class="viewer-btn"
+            onclick="zoomIn()"
+            title="Zoom in"
+        >
+            +
+        </button>
+
+        <button
+            class="viewer-btn"
+            onclick="resetZoom()"
+            title="Reset zoom"
+        >
+            ↺
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+/* =========================================================
+   MEDIA DATA
+========================================================= */
+
+const mediaFiles = [
+
+    {
+        name: "Image1",
+        file: "media/photo1.jpeg",
+        date: "2024-01-01"
+    },
+
+    {
+        name: "Image2",
+        file: "media/video2.mp4",
+        date: "2024-02-10"
+    },
+
+    {
+        name: "Video1",
+        file: "media/video1.mp4",
+        date: "2024-03-05"
+    },
+
+    {
+        name: "Video3",
+        file: "media/video3.mp4",
+        date: "2024-03-05"
+    },
+
+    {
+        name: "Video4",
+        file: "media/video4.mp4",
+        date: "2024-03-05"
+    },
+
+    {
+        name: "Image2",
+        file: "media/photo2.jpeg",
+        date: "2024-01-01"
+    },
+
+    {
+        name: "Image1",
+        file: "media/photo3.jpeg",
+        date: "2024-01-01"
+    },
+
+    {
+        name: "Image1",
+        file: "media/photo4.jpeg",
+        date: "2024-01-01"
+    },
+
+    {
+        name: "Image1",
+        file: "media/photo5.jpeg",
+        date: "2024-01-01"
+    },
+
+    {
+        name: "Image1",
+        file: "media/photo6.jpeg",
+        date: "2024-01-01"
+    },
+
+    {
+        name: "Image1",
+        file: "media/photo7.jpeg",
+        date: "2024-01-01"
+    },
+
+    {
+        name: "Image1",
+        file: "media/photo8.jpeg",
+        date: "2024-01-01"
+    },
+
+    {
+        name: "Image1",
+        file: "media/photo9.jpeg",
+        date: "2024-01-01"
+    }
+
+];
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let currentFilter = "all";
+
+let currentIndex = 0;
+
+let visibleMedia = [];
+
+let zoomLevel = 1;
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function isVideo(file) {
+
+    return /\.(mp4|webm|ogg|mov)$/i.test(file);
+
+}
+
+function isImage(file) {
+
+    return /\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i.test(file);
+
+}
+
+function getExtension(file) {
+
+    return file
+        .split(".")
+        .pop()
+        .toUpperCase();
+
+}
+
+/* =========================================================
+   FILTER
+========================================================= */
+
+function setFilter(type, button) {
+
+    currentFilter = type;
+
+    document
+        .querySelectorAll(".filters button")
+        .forEach(btn => btn.classList.remove("active"));
+
+    button.classList.add("active");
+
+    renderGallery();
+
+}
+
+/* =========================================================
+   GET FILTERED + SORTED MEDIA
+========================================================= */
+
+function getVisibleMedia() {
+
+    let result = [...mediaFiles];
+
+    /* FILTER */
+
+    if (currentFilter === "image") {
+
+        result = result.filter(item =>
+            !isVideo(item.file)
+        );
+
+    }
+
+    if (currentFilter === "video") {
+
+        result = result.filter(item =>
+            isVideo(item.file)
+        );
+
+    }
+
+    /* SEARCH */
+
+    const search =
+        document
+            .getElementById("search")
+            .value
+            .trim()
+            .toLowerCase();
+
+    if (search) {
+
+        result = result.filter(item =>
+
+            item.name
+                .toLowerCase()
+                .includes(search)
+
+            ||
+
+            item.file
+                .toLowerCase()
+                .includes(search)
+
+        );
+
+    }
+
+    /* SORT */
+
+    const sort =
+        document.getElementById("sort").value;
+
+    if (sort === "name-asc") {
+
+        result.sort((a, b) =>
+            a.name.localeCompare(b.name)
+        );
+
+    }
+
+    else if (sort === "name-desc") {
+
+        result.sort((a, b) =>
+            b.name.localeCompare(a.name)
+        );
+
+    }
+
+    else if (sort === "date-desc") {
+
+        result.sort((a, b) =>
+            new Date(b.date) - new Date(a.date)
+        );
+
+    }
+
+    else if (sort === "date-asc") {
+
+        result.sort((a, b) =>
+            new Date(a.date) - new Date(b.date)
+        );
+
+    }
+
+    return result;
+
+}
+
+/* =========================================================
+   RENDER GALLERY
+========================================================= */
+
+function renderGallery() {
+
+    const gallery =
+        document.getElementById("gallery");
+
+    const empty =
+        document.getElementById("empty");
+
+    visibleMedia = getVisibleMedia();
+
+    gallery.innerHTML = "";
+
+    document.getElementById("mediaCount").textContent =
+        `${visibleMedia.length} media`;
+
+    if (visibleMedia.length === 0) {
+
+        empty.style.display = "flex";
+
+        return;
+
+    }
+
+    empty.style.display = "none";
+
+    visibleMedia.forEach((item, index) => {
+
+        const card =
+            document.createElement("div");
+
+        card.className = "card";
+
+        card.setAttribute(
+            "data-index",
+            index
+        );
+
+        const video =
+            isVideo(item.file);
+
+        card.innerHTML = `
+
+            <div class="media-preview">
+
+                ${
+                    video
+
+                    ?
+
+                    `
+                    <video
+                        src="${item.file}"
+                        muted
+                        preload="metadata"
+                        playsinline
+                    ></video>
+                    `
+
+                    :
+
+                    `
+                    <img
+                        src="${item.file}"
+                        loading="lazy"
+                        alt="${escapeHTML(item.name)}"
+                    >
+                    `
+                }
+
+                <div class="type-badge">
+                    ${video ? "VIDEO" : "IMAGE"}
+                </div>
+
+                ${
+                    video
+
+                    ?
+
+                    `
+                    <div class="play">
+                        <span>▶</span>
+                    </div>
+                    `
+
+                    :
+
+                    ""
+
+                }
+
+            </div>
+
+            <div class="info">
+
+                <div class="info-title">
+                    ${escapeHTML(item.name)}
+                </div>
+
+                <div class="info-date">
+                    ${formatDate(item.date)}
+                </div>
+
+            </div>
+        `;
+
+        card.addEventListener(
+            "click",
+            () => openLightbox(index)
+        );
+
+        gallery.appendChild(card);
+
+    });
+
+}
+
+/* =========================================================
+   OPEN LIGHTBOX
+========================================================= */
+
+function openLightbox(index) {
+
+    if (!visibleMedia.length) {
+        return;
+    }
+
+    currentIndex = index;
+
+    zoomLevel = 1;
+
+    const lightbox =
+        document.getElementById("lightbox");
+
+    lightbox.classList.add("open");
+
+    document.body.classList.add("no-scroll");
+
+    renderViewer();
+
+}
+
+/* =========================================================
+   RENDER VIEWER
+========================================================= */
+
+function renderViewer() {
+
+    const item =
+        visibleMedia[currentIndex];
+
+    const viewer =
+        document.getElementById("viewerContent");
+
+    const video =
+        isVideo(item.file);
+
+    document.getElementById("viewerTitle").textContent =
+        item.name;
+
+    document.getElementById("viewerCounter").textContent =
+        `${currentIndex + 1} / ${visibleMedia.length}`;
+
+    viewer.innerHTML = "";
+
+    if (video) {
+
+        const el =
+            document.createElement("video");
+
+        el.src = item.file;
+
+        el.controls = true;
+        el.autoplay = true;
+        el.playsInline = true;
+
+        el.style.transform =
+            "scale(1)";
+
+        viewer.appendChild(el);
+
+    } else {
+
+        const el =
+            document.createElement("img");
+
+        el.src = item.file;
+
+        el.alt = item.name;
+
+        el.draggable = false;
+
+        el.addEventListener(
+            "dblclick",
+            () => {
+
+                if (zoomLevel === 1) {
+
+                    zoomLevel = 2;
+
+                } else {
+
+                    zoomLevel = 1;
+
+                }
+
+                updateZoom();
+
+            }
+        );
+
+        viewer.appendChild(el);
+
+    }
+
+    updateZoom();
+
+}
+
+/* =========================================================
+   NEXT
+========================================================= */
+
+function showNext() {
+
+    if (!visibleMedia.length) {
+        return;
+    }
+
+    currentIndex++;
+
+    if (currentIndex >= visibleMedia.length) {
+        currentIndex = 0;
+    }
+
+    renderViewer();
+
+}
+
+/* =========================================================
+   PREVIOUS
+========================================================= */
+
+function showPrevious() {
+
+    if (!visibleMedia.length) {
+        return;
+    }
+
+    currentIndex--;
+
+    if (currentIndex < 0) {
+        currentIndex = visibleMedia.length - 1;
+    }
+
+    renderViewer();
+
+}
+
+/* =========================================================
+   CLOSE
+========================================================= */
+
+function closeLightbox() {
+
+    const lightbox =
+        document.getElementById("lightbox");
+
+    lightbox.classList.remove("open");
+
+    document.body.classList.remove("no-scroll");
+
+    document.getElementById("viewerContent").innerHTML = "";
+
+}
+
+/* =========================================================
+   ZOOM
+========================================================= */
+
+function zoomIn() {
+
+    if (isCurrentVideo()) {
+        return;
+    }
+
+    zoomLevel =
+        Math.min(zoomLevel + 0.25, 4);
+
+    updateZoom();
+
+}
+
+function zoomOut() {
+
+    if (isCurrentVideo()) {
+        return;
+    }
+
+    zoomLevel =
+        Math.max(zoomLevel - 0.25, 0.5);
+
+    updateZoom();
+
+}
+
+function resetZoom() {
+
+    zoomLevel = 1;
+
+    updateZoom();
+
+}
+
+function updateZoom() {
+
+    const media =
+        document.querySelector(
+            "#viewerContent img, #viewerContent video"
+        );
+
+    if (!media) {
+        return;
+    }
+
+    media.style.transform =
+        `scale(${zoomLevel})`;
+
+    document.getElementById("zoomValue").textContent =
+        `${Math.round(zoomLevel * 100)}%`;
+
+}
+
+/* =========================================================
+   CHECK CURRENT TYPE
+========================================================= */
+
+function isCurrentVideo() {
+
+    if (!visibleMedia[currentIndex]) {
+        return false;
+    }
+
+    return isVideo(
+        visibleMedia[currentIndex].file
+    );
+
+}
+
+/* =========================================================
+   DOWNLOAD
+========================================================= */
+
+function downloadCurrent() {
+
+    const item =
+        visibleMedia[currentIndex];
+
+    if (!item) {
+        return;
+    }
+
+    const link =
+        document.createElement("a");
+
+    link.href = item.file;
+
+    link.download =
+        item.file.split("/").pop();
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    link.remove();
+
+}
+
+/* =========================================================
+   FULLSCREEN
+========================================================= */
+
+function toggleFullscreen() {
+
+    const lightbox =
+        document.getElementById("lightbox");
+
+    if (!document.fullscreenElement) {
+
+        lightbox.requestFullscreen?.();
+
+    } else {
+
+        document.exitFullscreen?.();
+
+    }
+
+}
+
+/* =========================================================
+   DATE FORMAT
+========================================================= */
+
+function formatDate(date) {
+
+    const d = new Date(date);
+
+    if (Number.isNaN(d.getTime())) {
+        return date;
+    }
+
+    return d.toLocaleDateString(
+        undefined,
+        {
+            year: "numeric",
+            month: "short",
+            day: "numeric"
+        }
+    );
+
+}
+
+/* =========================================================
+   BASIC HTML ESCAPE
+========================================================= */
+
+function escapeHTML(value) {
+
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+/* =========================================================
+   KEYBOARD CONTROLS
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        const lightbox =
+            document
+                .getElementById("lightbox")
+                .classList.contains("open");
+
+        if (!lightbox) {
+            return;
+        }
+
+        switch (event.key) {
+
+            case "ArrowRight":
+                event.preventDefault();
+                showNext();
+                break;
+
+            case "ArrowLeft":
+                event.preventDefault();
+                showPrevious();
+                break;
+
+            case "Escape":
+                event.preventDefault();
+                closeLightbox();
+                break;
+
+            case "Home":
+                event.preventDefault();
+
+                currentIndex = 0;
+
+                renderViewer();
+
+                break;
+
+            case "End":
+                event.preventDefault();
+
+                currentIndex =
+                    visibleMedia.length - 1;
+
+                renderViewer();
+
+                break;
+
+            case "+":
+            case "=":
+                event.preventDefault();
+                zoomIn();
+                break;
+
+            case "-":
+                event.preventDefault();
+                zoomOut();
+                break;
+
+        }
+
+    }
+);
+
+/* =========================================================
+   CLICK OUTSIDE TO CLOSE
+========================================================= */
+
+document
+    .getElementById("lightbox")
+    .addEventListener(
+        "click",
+        event => {
+
+            if (
+                event.target.id === "lightbox"
+            ) {
+
+                closeLightbox();
+
+            }
+
+        }
+    );
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+document
+    .getElementById("search")
+    .addEventListener(
+        "input",
+        renderGallery
+    );
+
+/* =========================================================
+   SORT
+========================================================= */
+
+document
+    .getElementById("sort")
+    .addEventListener(
+        "change",
+        renderGallery
+    );
+
+/* =========================================================
+   INITIAL LOAD
+========================================================= */
+
+renderGallery();
+
+</script>
+
+</body>
 </html>
+
